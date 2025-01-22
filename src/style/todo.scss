@@ -1,0 +1,42 @@
+@import "util";
+h1 {
+  color: $color-red;
+}
+h3 {
+  color: $color-blue3;
+}
+
+.container {
+  width: 300px;
+  height: 300px;
+  margin: 0;
+  padding: 0;
+  border: 1px solid red;
+  box-sizing: border-box;
+  text-align: center;
+  > .add {
+    text-align: left;
+    padding-left: 10%;
+  }
+  > .list {
+    text-align: left;
+    padding-left: 10%;
+    padding: 7%;
+    font-size: 13px;
+    list-style: none;
+  }
+  > .done {
+    text-align: left;
+    padding-left: 10%;
+    padding: 7%;
+    font-size: 13px;
+    list-style: none;
+  }
+}
+.btn {
+  color: black;
+  &:hover {
+    cursor: pointer;
+    opacity: 0.8;
+  }
+}

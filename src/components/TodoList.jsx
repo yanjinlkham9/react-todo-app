@@ -4,7 +4,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCheck } from "@fortawesome/free-solid-svg-icons";
 import { faCheckToSlot } from "@fortawesome/free-solid-svg-icons/faCheckToSlot";
 import { create, done } from "../store/modules/todo";
-
+import "../style/todo.scss";
 export default function TodoList() {
   //useSelector()을 통해서 store의 state를 가져오기
   let todoList = useSelector((state) => state.todo.list);
@@ -38,17 +38,19 @@ export default function TodoList() {
     inputRef.current.focus();
   }, []);
   return (
-    <section>
+    <section className="container">
       <h3>할일 목록</h3>
-      <div>
+      <div className="add">
         <input type="text" ref={inputRef} onKeyDown={enterTodo} />
-        <button onClick={createTodo}>추가</button>
+        <button className="btn" onClick={createTodo}>
+          추가
+        </button>
       </div>
-      <ul>
+      <ul className="list">
         {todoList.map((todo) => {
           return (
             <li key={todo.id}>
-              <button onClick={() => dispatch(done(todo.id))}>
+              <button className="btn" onClick={() => dispatch(done(todo.id))}>
                 <FontAwesomeIcon icon={faCheckToSlot} />
               </button>
               <span>{todo.text}</span>

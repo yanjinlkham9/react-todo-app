@@ -1,5 +1,5 @@
 import ListContainer from "./components/ListContainer";
-
+import "./style/todo.scss";
 function App() {
   return (
     <>

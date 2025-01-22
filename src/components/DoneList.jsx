@@ -7,9 +7,9 @@ export default function DoneList() {
   );
 
   return (
-    <section>
+    <section className="container">
       <h3>완료된 목록</h3>
-      <ul>
+      <ul className="done">
         {doneList.map((todo) => {
           return (
             <li key={todo.id}>
