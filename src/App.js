@@ -1,8 +1,11 @@
+import ListContainer from "./components/ListContainer";
+
 function App() {
   return (
-    <div className="App">
-      <h1>hhh</h1>
-    </div>
+    <>
+      <h1>Todo list 만들기</h1>
+      <ListContainer />
+    </>
   );
 }
 
