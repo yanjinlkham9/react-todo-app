@@ -11,6 +11,7 @@ const sequelize = new Sequelize(
   config
 );
 // model 추가
+db.Todo = require("./Todo")(sequelize, Sequelize);
 
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;
