@@ -1,7 +1,7 @@
-import { faCheck } from "@fortawesome/free-solid-svg-icons";
+import { faCheck, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useDispatch, useSelector } from "react-redux";
-import { create, done } from "../store/modules/todo";
+import { create, del, done } from "../store/modules/todo";
 import { useEffect, useRef } from "react";
 import axios from "axios";
 import { ReduxState, Todo } from "../../types/types";
@@ -21,6 +21,12 @@ export default function TodoList() {
 
   console.log("nextID", nextID);
 
+  const clearInput = ()=>{
+       if(inputRef.current){
+      inputRef.current.value = "";
+      inputRef.current.focus();  
+    }
+  }
   // 할 일 추가 POST /todo
   const createTodo = async () => {
     if (inputRef.current&&inputRef.current.value.trim() !== "") {
@@ -31,11 +37,8 @@ export default function TodoList() {
     await axios.post(`${process.env.REACT_APP_API_SERVER}/todo`, {
       text: inputRef.current?.value,
     });
-    if(inputRef.current){
-      inputRef.current.value = "";
-      inputRef.current.focus();  
-    }
-    
+ 
+    clearInput();
   };
 
   // todo 상태 변경 PATCH /todo/:todoId
@@ -55,6 +58,13 @@ export default function TodoList() {
   useEffect(() => {
     if(inputRef.current) inputRef.current.focus();
   }, []);
+
+  //todo 삭제 /todo/:todoId
+  const deleteTodo = async (todoId:number)=>{
+    await axios.delete(`${process.env.REACT_APP_API_SERVER}/todo/${todoId}`);
+    dispatch(del(todoId))
+
+  }
   return (
     <section>
       <h3>할 일 목록</h3>
@@ -69,7 +79,10 @@ export default function TodoList() {
               <button onClick={() => toDone(todo.id)}>
                 <FontAwesomeIcon icon={faCheck} />
               </button>
-              <span>{todo.text}</span>
+              <span> {todo.text} </span>
+              <button onClick={()=>deleteTodo(todo.id)}>
+              <FontAwesomeIcon icon={faTrash} />
+              </button>
             </li>
           );
         })}

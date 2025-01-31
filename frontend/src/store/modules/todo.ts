@@ -11,6 +11,7 @@ initialState["nextID"] = count;
 const CREATE = "todo/CREATE" as const;
 const DONE = "todo/DONE" as const;
 const INIT = "todo/INIT" as const;
+const DELETE = "todo/DELETE" as const;
 
 // components 에서 사용될 액션 반환 함수
 export function create(payload: {id?:number; text:string}) {
@@ -34,6 +35,13 @@ export function init(data: Todo[]) {
     data: data,
   };
 }
+
+export function del(id: number){
+  return{
+    type: DELETE,
+    id: id
+  }
+}
 interface Init{
   type: typeof INIT;
   data: Todo[];
@@ -46,8 +54,11 @@ interface Create{
   type: typeof CREATE;
   payload: {id:number; text:string};
 }
-
-type Action=Create | Done | Init;
+interface Delete{
+  type: typeof DELETE;
+  id: number;
+}
+type Action=Create | Done | Init| Delete;
 
 
 //state: object type
@@ -89,6 +100,11 @@ export function todoReducer(state: TodoState = initialState, action:Action) {
           } else return todo;
         }),
       };
+      case DELETE:
+        return {
+          ...state,
+          list: state.list.filter((todo: Todo)=>todo.id!==action.id),
+        }
     default:
       return state;
   }

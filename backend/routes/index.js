@@ -18,4 +18,7 @@ router.post("/todo", controller.addTodo);
 // PATCH /api-server/todo/:todoId
 router.patch("/todo/:todoId", controller.patchDoneState);
 
+//DELETE /api-server/todo/:todoId
+router.delete("/todo/:todoId", controller.deleteTodo)
+
 module.exports = router;
