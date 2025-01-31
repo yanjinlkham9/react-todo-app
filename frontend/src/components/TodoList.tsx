@@ -1,8 +1,8 @@
-import { faCheck, faTrash } from "@fortawesome/free-solid-svg-icons";
+import { faCheck, faPencil, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useDispatch, useSelector } from "react-redux";
-import { create, del, done } from "../store/modules/todo";
-import { useEffect, useRef } from "react";
+import { create, del, done, update } from "../store/modules/todo";
+import { useEffect, useRef, useState } from "react";
 import axios from "axios";
 import { ReduxState, Todo } from "../../types/types";
 
@@ -62,15 +62,53 @@ export default function TodoList() {
   //todo 삭제 /todo/:todoId
   const deleteTodo = async (todoId:number)=>{
     await axios.delete(`${process.env.REACT_APP_API_SERVER}/todo/${todoId}`);
-    dispatch(del(todoId))
+    dispatch(del(todoId));
 
   }
+
+  //todo 수정 -> 수정/수정 취소 /content
+  const [isUpdateMode, setIsUpdateMode] = useState(false);
+  const [updateId, setUpdateId] = useState(0);
+  const getTodo = (todoId: number) =>{
+    setIsUpdateMode(true); //수정 모드로 변경
+    const [todo] = todoList.filter((to)=>to.id ===todoId); //{id, text, done}
+    console.log("update: ", todo);
+    if(inputRef.current) inputRef.current.value = todo.text;
+    setUpdateId(todoId);
+  }
+
+  const cancelUpdate=()=>{
+    setIsUpdateMode(false);
+    clearInput();
+  }
+
+  const updateTodo = async ()=>{
+    const inputValue = inputRef.current?.value as string;
+    const res = await axios.patch(`${process.env.REACT_APP_API_SERVER}/content`, {
+      id: updateId,
+      text: inputValue,
+    });
+    console.log(res.data); //{isSuccess}
+    if(res.data.isSuccess){
+      clearInput();
+    }
+    dispatch(update(updateId, inputValue))
+  }
+
+
   return (
     <section>
       <h3>할 일 목록</h3>
       <div>
         <input type="text" ref={inputRef} onKeyDown={enterTodo} />
-        <button onClick={createTodo}>추가</button>
+        {isUpdateMode?
+        (<>
+        <button onClick={updateTodo}>수정</button>  
+        <button onClick={cancelUpdate}>수정 취소</button>  
+        </>) 
+        :(<button onClick={createTodo}>추가</button>)
+      }
+      
       </div>
       <ul>
         {todoList.map((todo) => {
@@ -80,6 +118,9 @@ export default function TodoList() {
                 <FontAwesomeIcon icon={faCheck} />
               </button>
               <span> {todo.text} </span>
+              <button onClick={()=> getTodo(todo.id)}> 
+                <FontAwesomeIcon icon={faPencil} /> 
+                </button>
               <button onClick={()=>deleteTodo(todo.id)}>
               <FontAwesomeIcon icon={faTrash} />
               </button>

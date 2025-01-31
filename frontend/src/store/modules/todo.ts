@@ -12,6 +12,7 @@ const CREATE = "todo/CREATE" as const;
 const DONE = "todo/DONE" as const;
 const INIT = "todo/INIT" as const;
 const DELETE = "todo/DELETE" as const;
+const UPDATE = "todo/UPDATE" as const;
 
 // components 에서 사용될 액션 반환 함수
 export function create(payload: {id?:number; text:string}) {
@@ -42,6 +43,13 @@ export function del(id: number){
     id: id
   }
 }
+export function update(id: number, text: string){
+  return{
+    type: UPDATE,
+    id,
+    text,
+  }
+}
 interface Init{
   type: typeof INIT;
   data: Todo[];
@@ -58,7 +66,12 @@ interface Delete{
   type: typeof DELETE;
   id: number;
 }
-type Action=Create | Done | Init| Delete;
+interface Update{
+  type: typeof UPDATE;
+  id: number;
+  text: string;
+}
+type Action=Create | Done | Init| Delete | Update;
 
 
 //state: object type
@@ -104,6 +117,19 @@ export function todoReducer(state: TodoState = initialState, action:Action) {
         return {
           ...state,
           list: state.list.filter((todo: Todo)=>todo.id!==action.id),
+        }
+      case UPDATE:
+        return{
+          ...state, 
+          list:state.list.map((li:Todo)=>{
+            if(li.id===action.id){
+              return{
+                ...li,
+                text: action.text,
+              }
+            }
+            return li;
+          }),
         }
     default:
       return state;

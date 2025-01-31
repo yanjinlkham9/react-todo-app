@@ -73,3 +73,20 @@ exports.deleteTodo = async(req,res)=>{
     res.status(500).send("서버에러.. 관리자에게 문의하세요!");
   }
 }
+
+exports.patchContent = async(req,res)=>{
+  try{
+    //req.body = {id, text}
+    const {id, text} = req.body;
+    const isUpdated = await Todo.update(
+      {text: text},
+      {where: {id:id}}
+    );
+    Boolean(isUpdated)
+      ? res.send({isSuccess: true})
+      : res.send({isSuccess: false});
+  }catch (err) {
+    console.log("server err", err);
+    res.status(500).send("서버에러.. 관리자에게 문의하세요!");
+  }
+}
