@@ -1,4 +1,6 @@
-const initialState = {
+import { Todo, TodoState } from "../../../types/types";
+
+const initialState: TodoState = {
   list: [],
 };
 
@@ -6,19 +8,19 @@ const count = initialState.list.length; //3
 initialState["nextID"] = count;
 
 // action type에 대한 상수 설정
-const CREATE = "todo/CREATE";
-const DONE = "todo/DONE";
-const INIT = "todo/INIT";
+const CREATE = "todo/CREATE" as const;
+const DONE = "todo/DONE" as const;
+const INIT = "todo/INIT" as const;
 
 // components 에서 사용될 액션 반환 함수
-export function create(payload) {
+export function create(payload: {id?:number; text:string}) {
   return {
     type: CREATE,
     payload: payload, // {id:number, text:String}
   };
 }
 
-export function done(id) {
+export function done(id: number) {
   return {
     type: DONE,
     id: id, // id:number
@@ -26,14 +28,30 @@ export function done(id) {
 }
 
 // data:{id, text, done}[]
-export function init(data) {
+export function init(data: Todo[]) {
   return {
     type: INIT,
     data: data,
   };
 }
+interface Init{
+  type: typeof INIT;
+  data: Todo[];
+}
+interface Done{
+  type: typeof DONE;
+  id: number;
+}
+interface Create{
+  type: typeof CREATE;
+  payload: {id:number; text:string};
+}
 
-export function todoReducer(state = initialState, action) {
+type Action=Create | Done | Init;
+
+
+//state: object type
+export function todoReducer(state: TodoState = initialState, action:Action) {
   switch (action.type) {
     case INIT:
       return {

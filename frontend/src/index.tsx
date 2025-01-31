@@ -4,7 +4,7 @@ import { configureStore } from "@reduxjs/toolkit";
 import rootReducer from "./store";
 import { Provider } from "react-redux";
 import ListContainer from "./components/ListContainer";
-const root = ReactDOM.createRoot(document.getElementById("root"));
+const root = ReactDOM.createRoot(document.getElementById("root") as HTMLElement);
 //store 설정
 const store = configureStore({ reducer: rootReducer });
 root.render(

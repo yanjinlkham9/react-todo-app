@@ -4,38 +4,42 @@ import { useDispatch, useSelector } from "react-redux";
 import { create, done } from "../store/modules/todo";
 import { useEffect, useRef } from "react";
 import axios from "axios";
+import { ReduxState, Todo } from "../../types/types";
 
 export default function TodoList() {
   // useSelector()를 통해서 store의 state 가져오기
-  let todoList = useSelector((state) => state.todo.list);
+  let todoList = useSelector((state:ReduxState) => state.todo.list);
   //   console.log(todoList);
 
-  todoList = todoList.filter((todo) => todo.done === false);
+  todoList = todoList.filter((todo: Todo) => todo.done === false);
 
-  const nextID = useSelector((state) => state.todo.nextID);
+  const nextID = useSelector((state: ReduxState) => state.todo.nextID);
   // useDispatch()를 통해서 dispatch 함수 생성
   const dispatch = useDispatch();
 
-  const inputRef = useRef();
+  const inputRef = useRef<HTMLInputElement>(null);
 
   console.log("nextID", nextID);
 
   // 할 일 추가 POST /todo
   const createTodo = async () => {
-    if (inputRef.current.value.trim() === "") return;
+    if (inputRef.current&&inputRef.current.value.trim() !== "") {
     // state를 변경해서 화면을 바꾸는 것
     dispatch(create({ id: nextID, text: inputRef.current.value }));
-
+  }
     // DB 정보를 바꾸기 위해서 axios 요청
     await axios.post(`${process.env.REACT_APP_API_SERVER}/todo`, {
-      text: inputRef.current.value,
+      text: inputRef.current?.value,
     });
-    inputRef.current.value = "";
-    inputRef.current.focus();
+    if(inputRef.current){
+      inputRef.current.value = "";
+      inputRef.current.focus();  
+    }
+    
   };
 
   // todo 상태 변경 PATCH /todo/:todoId
-  const toDone = async (id) => {
+  const toDone = async (id: number) => {
     // state 를 변경해서 화면을 바꾸는것
     dispatch(done(id));
 
@@ -43,13 +47,13 @@ export default function TodoList() {
     await axios.patch(`${process.env.REACT_APP_API_SERVER}/todo/${id}`);
   };
 
-  const enterTodo = (e) => {
+  const enterTodo = (e:React.KeyboardEvent) => {
     if (e.nativeEvent.isComposing) return;
     if (e.key === "Enter") createTodo();
   };
 
   useEffect(() => {
-    inputRef.current.focus();
+    if(inputRef.current) inputRef.current.focus();
   }, []);
   return (
     <section>
